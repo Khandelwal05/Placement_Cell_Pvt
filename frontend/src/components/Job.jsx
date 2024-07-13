@@ -7,7 +7,13 @@ import {
   Paper,
   Typography,
   MenuItem,
+  IconButton,
+  List,
+  ListItem,
+  ListItemText,
 } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
 
 const JobForm = ({ onClose }) => {
   const initialFormData = {
@@ -18,15 +24,16 @@ const JobForm = ({ onClose }) => {
     eligibility_criteria: '',
     deadline: '',
     stipend_salary: '',
-    company: localStorage.getItem('organisationId') || '', 
+    company: localStorage.getItem('organisationId') || 'null', // Retrieve organisation ID from local storage
     status: 'open',
     openings: 1,
     perks_benefits: '',
-    custom_ques: null,
+    custom_ques: [],
     attachments: null,
   };
 
   const [formData, setFormData] = useState(initialFormData);
+  const [currentQuestion, setCurrentQuestion] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -36,12 +43,38 @@ const JobForm = ({ onClose }) => {
     });
   };
 
+  const handleQuestionChange = (e) => {
+    setCurrentQuestion(e.target.value);
+  };
+
+  const handleAddQuestion = () => {
+    if (currentQuestion.trim()) {
+      setFormData({
+        ...formData,
+        custom_ques: [...formData.custom_ques, currentQuestion],
+      });
+      setCurrentQuestion('');
+    }
+  };
+
+  const handleDeleteQuestion = (index) => {
+    const updatedQuestions = formData.custom_ques.filter((_, i) => i !== index);
+    setFormData({
+      ...formData,
+      custom_ques: updatedQuestions,
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const formDataToSend = new FormData();
       for (let key in formData) {
-        formDataToSend.append(key, formData[key]);
+        if (Array.isArray(formData[key])) {
+          formDataToSend.append(key, JSON.stringify(formData[key]));
+        } else {
+          formDataToSend.append(key, formData[key]);
+        }
       }
       await axios.post('http://localhost:8000/api/v1/job/', formDataToSend);
       alert('Job created successfully');
@@ -196,7 +229,7 @@ const JobForm = ({ onClose }) => {
                 }}
                 InputLabelProps={{
                   style: {
-                    fontWeight: 'bold', 
+                    // fontWeight: 'bold', 
                   }
                 }}
               />
@@ -289,31 +322,66 @@ const JobForm = ({ onClose }) => {
                 }}
               />
             </Grid>
-            <Grid item xs={12} sm={4}>
-              <TextField
-                label="Custom Questions"
-                name="custom_ques"
-                value={formData.custom_ques}
-                onChange={handleChange}
-                fullWidth
-                multiline
-                rows={4}
-                InputProps={{ 
-                  style: { 
-                    borderRadius: '20px',
-                    fontWeight: 'bold', 
-                  } 
-                }}
-                InputLabelProps={{
-                  style: {
-                    fontWeight: 'bold', 
-                  }
-                }}
-              />
+            <Grid item xs={12}>
+              <Typography variant="h6" gutterBottom style={{ fontFamily: 'Roboto', fontWeight: 700 }}>
+                Custom Questions
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={10}>
+                  <TextField
+                    label="Add Question"
+                    value={currentQuestion}
+                    onChange={handleQuestionChange}
+                    fullWidth
+                    InputProps={{ 
+                      style: { 
+                        borderRadius: '20px',
+                        fontWeight: 'bold', // Make text inside input bold
+                      } 
+                    }}
+                    InputLabelProps={{
+                      style: {
+                        fontWeight: 'bold', // Make label bold
+                      }
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={2}>
+                  <IconButton color="primary" onClick={handleAddQuestion}>
+                    <AddIcon />
+                  </IconButton>
+                </Grid>
+                <Grid item xs={12}>
+                  <List>
+                    {formData.custom_ques.map((question, index) => (
+                      <ListItem key={index} secondaryAction={
+                        <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteQuestion(index)}>
+                          <DeleteIcon />
+                        </IconButton>
+                      }>
+                        <ListItemText primary={question} />
+                      </ListItem>
+                    ))}
+                  </List>
+                </Grid>
+              </Grid>
             </Grid>
-            <Grid item xs={12} style={{ textAlign: 'center' }}>
-              <Button type="submit" variant="contained" sx={{ backgroundColor: 'blue', '&:hover': { backgroundColor: 'darkblue' } }}>
-                Post Job
+            <Grid item xs={12}>
+              <Button
+                variant="contained"
+                color="primary"
+                type="submit"
+                style={{ borderRadius: '20px' }}
+              >
+                Create Job
+              </Button>
+              <Button
+                variant="outlined"
+                color="secondary"
+                onClick={onClose}
+                style={{ marginLeft: '10px', borderRadius: '20px' }}
+              >
+                Cancel
               </Button>
             </Grid>
           </Grid>
