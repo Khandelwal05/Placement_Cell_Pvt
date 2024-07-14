@@ -1,3 +1,4 @@
+
 // import React, { useState } from 'react';
 // import axios from 'axios';
 // import { useNavigate } from 'react-router-dom';
@@ -19,6 +20,14 @@
 //   const [isSigningUp, setIsSigningUp] = useState(false);
 //   const [showPassword, setShowPassword] = useState(false); // State for sign-in password visibility
 //   const [showConfirmPassword, setShowConfirmPassword] = useState(false); // State for confirming password
+
+//   const handleGoogleSignup = () => {
+//     window.location.href = 'http://localhost:8000/admin/login/';
+//   };
+
+//   const handleLinkedInSignup = () => {
+//     window.location.href = 'http://localhost:8000/api/v1/auth/linkedin/';
+//   };
 
 //   const handleSignInClick = () => {
 //     setIsRightPanelActive(false);
@@ -91,10 +100,15 @@
 //         <form action="#" onSubmit={handleSignup}>
 //           <h1>Create Account</h1>
 //           <div className="social-container">
-//             <a href="#" className="social"><i className="fab fa-facebook-f"></i></a>
-//             <a href="#" className="social"><i className="fab fa-google-plus-g"></i></a>
-//             <a href="#" className="social"><i className="fab fa-linkedin-in"></i></a>
-//           </div>
+//   <button className="social" onClick={handleGoogleSignup}>
+//     Sign up with Google
+//   </button>
+//   <button onClick={() => window.location.href='http://localhost:8000/api/v1/linkedin/auth'}>
+//   Sign in with LinkedIn
+// </button>
+
+// </div>
+
 //           <span>or use your email for registration</span>
 //           <input
 //             style={{ borderRadius: '20px' }}
@@ -216,6 +230,7 @@
 // };
 
 // export default Signup;
+
 
 
 import React, { useState } from 'react';

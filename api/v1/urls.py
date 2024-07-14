@@ -24,5 +24,6 @@ urlpatterns = [
     path("org/create/", Org.as_view(), name="create-organisation"),
     path("verify-otp/", VerifyOTPView.as_view(), name="verify-otp"),
     path("job/", Job.as_view(), name="create-job"),
+    path('skills/', views.SkillList.as_view(), name='skill-list'),
     
 ]

@@ -8,6 +8,15 @@ from .models import *
 from .serializers import *
 from utils.mail import application_successful
 
+from rest_framework import generics
+from .models import Skill
+from .serializers import SkillSerializer
+
+class SkillList(generics.ListCreateAPIView):
+    queryset = Skill.objects.all()
+    serializer_class = SkillSerializer
+
+
 class ApplicantView(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = [IsAuthenticated]
